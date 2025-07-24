@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>System Breached</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: monospace;
+      font-size: 18px;
+      line-height: 1.4;
+      height: 100%;
+      overflow: hidden;
+      user-select: none;
+      color: #aaf;
+    }
+
+    .gradient-text {
+      background: linear-gradient(to right, #4b0082, #6a5acd, #7b68ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: text; /* allow text selection for links */
+    }
+
+    .terminal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 40px;
+      box-sizing: border-box;
+      overflow: auto;
+      text-align: center;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE/Edge */
+    }
+
+    .terminal::-webkit-scrollbar {
+      width: 0;
+      display: none;
+      background: transparent;
+    }
+
+    pre {
+      white-space: pre-wrap; /* so long lines wrap */
+      font-size: 16px;
+      margin: 0 auto;
+      display: inline-block;
+      cursor: default;
+    }
+
+    /* clickable parts */
+    .clickable {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #99aaff;
+      transition: color 0.2s ease;
+    }
+
+    .clickable:hover {
+      color: #fff;
+      text-shadow: 0 0 6px #6666ff;
+    }
+
+    .audiobar {
+      margin-top: 1em;
+      color: #99aaff;
+      font-size: 0.95em;
+    }
+
+    .audiobar span {
+      display: inline-block;
+      min-width: 40px;
+    }
+
+    .progress {
+      display: inline-block;
+      width: 240px;
+      height: 4px;
+      background: #222244;
+      position: relative;
+      margin: 5px 10px;
+      vertical-align: middle;
+      border-radius: 3px;
+    }
+
+    .thumb {
+      position: absolute;
+      top: -3px;
+      width: 12px;
+      height: 12px;
+      background: #6666ff;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #8888ff;
+    }
+
+    .controls {
+      margin-top: 0.5em;
+      font-size: 1.2em;
+      letter-spacing: 2px;
+      cursor: pointer;
+      color: #99aaff;
+    }
+
+    .controls span:hover {
+      color: #fff;
+      text-shadow: 0 0 6px #6666ff;
+    }
+
+    .active {
+      color: #fff;
+      text-shadow: 0 0 8px #6666ff;
+    }
+
+    .cursor {
+      display: none;
+    }
+
+    @media screen and (max-width: 768px) {
+      pre {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<audio id="bg-audio">
+  <source src="throne_of_ashes.mp3" type="audio/mpeg" />
+  Your browser does not support audio.
+</audio>
+
+<div class="terminal" id="terminal">
+  <div>
+<pre class="gradient-text">
+⠀     ⣰⠟⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⡻⣧⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣰⡇⢰⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⠘⣧⠀⠀⠀
+⠀⠀⠀⣰⡏⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⢸⣧⠀⠀⠀
+⠀⠀⢰⠃⢸⠄⠘⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡇⠀⢾⠈⣧⠀⠀
+⠀⠀⢸⡄⢸⣄⠀⢳⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼⠀⢀⡏⢀⣟⠀⠀
+⠀⢠⠿⡇⠈⣿⡀⠀⠻⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡞⠁⠀⣽⠇⢀⡟⡆⠀
+⠀⢸⠀⢻⠂⠸⣷⡀⠀⠙⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠀⢀⣼⡟⠀⡺⠀⣹⠀
+⠀⣼⡃⢸⣷⠄⢹⣿⣆⠸⣏⠳⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⢡⡇⢀⣿⣯⠀⣴⡗⠀⣿⡀
+              ⢸⡇⢷⣄⠹⣷⣬⣿⣿⡛⠻⣆⠀⠙⠢⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡴⠚⠁⢀⡿⠛⣻⡿⢡⣼⠟⢀⡼⠁⡇   [ <span class="clickable" id="link-srazy">srazy.top</span> ]
+⠀⢳⡀⣷⣄⡸⣿⣮⣿⣷⡀⠙⣶⣄⠀⠈⠑⢦⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠞⠁⠀⣀⣴⠏⠀⣾⣿⣥⣿⠏⣀⣼⠁⡼⠃ 
+⠀⠈⣯⠈⢿⣦⡘⣿⡄⠙⢦⣀⢽⣿⣿⠶⠄⠀⠹⡄⠀⠀⠀⠀⠀⠀⠀⠀⢠⡞⠁⠠⠶⣾⣿⡿⢁⡴⠛⢁⣼⠁⣴⡿⠋⣸⠇⠀
+⠀⠀⢸⠻⣆⠙⣿⣿⣿⣆⠀⢻⣷⣾⣿⣅⠀⠀⠀⣱⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⢀⣽⣷⣾⡟⠀⢀⣾⣿⣿⠋⣐⡾⣻⠀⠀
+⠀⠀⠈⢧⡈⢿⣬⣽⣿⣉⠙⢲⣮⣽⡇⠀⠀⢀⡞⠃⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⡆⠀⠀⢰⣿⣵⡶⠚⢉⣹⣟⣡⣼⠏⣠⠃⠀⠀
+⠀⠀⠀⠘⢷⣄⡉⠻⣿⣿⣥⣤⣿⣿⣿⡋⠀⠈⠳⣄⡀⠀⠀⠀⠀⠀⠀⠀⣠⠾⠃⠀⢘⣿⣿⣿⣤⣤⣿⣿⠟⠋⣀⡴⠏⠀⠀⠀
+⠀⠀⠀⠀⠀⠈⠙⠒⢬⡿⠋⠀⠀⣘⣿⣷⡟⠀⠀⠀⢳⠀⠀⠀⠀⠀⠀⣸⠁⠀⠀⢘⣾⣿⣇⡀⠀⠈⢻⡯⠔⠚⠉⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠷⢤⡞⠉⠀⣩⣿⣿⣾⠀⠀⠈⢣⠀⠀⠀⠀⣰⠃⠀⡀⢻⣿⣿⣯⡀⠉⠓⡦⠽⠇⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣷⣠⠞⠁⣰⠻⣿⣿⡧⠤⢌⣱⠄⠀⢾⡁⠤⢤⡿⣿⠟⢧⠀⠙⣦⣾⡗⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣶⣦⣧⣤⣏⣼⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢳⣜⣧⣬⣧⣶⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡉⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⢉⡉⠀⠀⠀⠀⠀⠀⠀⠀
+     ⚠️ You have been breached by $RAZY. ⚠️
+───────────────────────────────────────────────────────
+&gt; Contact <span class="clickable" id="email-copy">f@bie.gov.ao.</span>
+&gt; <span class="clickable" id="link-discord">https://discord.gg/fedd</span>
+&gt; <span class="clickable" id="link-srazy-line">$RAZY Owns You.</span>
+───────────────────────────────────────────────────────
+</pre>
+
+    <div class="audiobar">
+       [Throne Of Ashes] <br>
+      <span id="current">0:00</span>
+      <div class="progress"><div class="thumb" id="thumb"></div></div>
+      <span id="duration">0:00</span><br>
+      <div class="controls">
+        <span id="loop">⇄</span>&nbsp;&nbsp;
+        <span id="back">◃◃</span>&nbsp;&nbsp;
+        <span id="playpause">▶</span>&nbsp;&nbsp;
+        <span id="forward">▹▹</span>&nbsp;&nbsp;
+        <span id="restart">↻</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const audio = document.getElementById('bg-audio');
+  const current = document.getElementById('current');
+  const duration = document.getElementById('duration');
+  const thumb = document.getElementById('thumb');
+  const playpause = document.getElementById('playpause');
+  const loop = document.getElementById('loop');
+
+  playpause.onclick = () => {
+    if (audio.paused) {
+      audio.play();
+      playpause.textContent = 'ⅠⅠ';
+    } else {
+      audio.pause();
+      playpause.textContent = '▶';
+    }
+  };
+
+  document.getElementById('back').onclick = () => {
+    audio.currentTime = Math.max(0, audio.currentTime - 5);
+  };
+
+  document.getElementById('forward').onclick = () => {
+    audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+  };
+
+  document.getElementById('restart').onclick = () => {
+    audio.currentTime = 0;
+    audio.play();
+  };
+
+  loop.onclick = () => {
+    audio.loop = !audio.loop;
+    loop.classList.toggle('active', audio.loop);
+  };
+
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s < 10 ? '0' + s : s}`;
+  }
+
+  audio.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(audio.duration);
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    current.textContent = formatTime(audio.currentTime);
+    const percent = (audio.currentTime / audio.duration);
+    thumb.style.left = `${percent * 240}px`;
+  });
+
+  document.body.addEventListener('click', () => {
+    audio.play().catch(() => {});
+  }, { once: true });
+
+  // Link handlers
+  document.getElementById('link-discord').addEventListener('click', () => {
+    window.open('https://discord.gg/fedd', '_blank');
+  });
+
+  document.getElementById('link-srazy').addEventListener('click', () => {
+    window.open('https://srazy.top', '_blank');
+  });
+  // Also for line text below (in case)
+  document.getElementById('link-srazy-line').addEventListener('click', () => {
+    window.open('https://srazy.top', '_blank');
+  });
+
+  document.getElementById('email-copy').addEventListener('click', () => {
+    const email = 'f@bie.gov.ao';
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(email).then(() => {
+        alert('Email copied to clipboard!');
+      }, () => {
+        alert('Failed to copy email.');
+      });
+    } else {
+      // fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = email;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        alert('Email copied to clipboard!');
+      } catch {
+        alert('Failed to copy email.');
+      }
+      document.body.removeChild(textArea);
+    }
+  });
+</script>
+
+</body>
+</html>
